@@ -29,6 +29,21 @@ public class Cell implements Drawable{
 	 * */
 	public void liveOrDie(int numNeighbors) {
 		
+		if(isAlive) {
+		if(numNeighbors < 2) {
+			isAlive = false;
+		}
+		else if(numNeighbors <= 3) {
+			isAlive = true;
+		}
+		else if(numNeighbors > 3) {
+			isAlive = false;
+		}
+		}else {
+			if(numNeighbors == 3) {
+				isAlive = true;
+			}
+		}
 	}
 	
 	public int getX() {
@@ -45,8 +60,14 @@ public class Cell implements Drawable{
 	@Override
 	public void draw(Graphics g) {
 	
-		
-		
+		if(isAlive) {
+			g.setColor(Color.blue);
+			g.fillRect(x, y, cellSize, cellSize);
+		}
+		else {
+			g.setColor(Color.gray);
+			g.fillRect(x, y, cellSize, cellSize);
+		}
 		
 		
 		
