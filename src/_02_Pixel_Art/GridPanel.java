@@ -78,6 +78,11 @@ public class GridPanel extends JPanel{
 				
 	}
 	
+	public Pixel[][] getPixel(){
+		return pixels;
+	}
+	
+	
 	@Override
 	public void paintComponent(Graphics g) {
 		//4. Iterate through the array.

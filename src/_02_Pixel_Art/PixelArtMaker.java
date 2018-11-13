@@ -1,15 +1,26 @@
 package _02_Pixel_Art;
 
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
 
+import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-public class PixelArtMaker implements MouseListener{
+public class PixelArtMaker implements MouseListener, ActionListener{
 	private JFrame window;
 	private GridInputPanel gip;
 	private GridPanel gp;
+	JButton button;
+	JPanel panel;
 	ColorSelectionPanel csp;
 	
 	public void start() {
@@ -27,7 +38,13 @@ public class PixelArtMaker implements MouseListener{
 	public void submitGridData(int w, int h, int r, int c) {
 		gp = new GridPanel(w, h, r, c);
 		csp = new ColorSelectionPanel();
+		button = new JButton();
+		panel = new JPanel();
+		button.setText("save");
+		button.addActionListener(this);
 		window.remove(gip);
+		window.add(panel);
+		panel.add(button);
 		window.add(gp);
 		window.add(csp);
 		gp.repaint();
@@ -61,5 +78,34 @@ public class PixelArtMaker implements MouseListener{
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		System.out.println("hi");
+		try {
+			FileWriter fw = new FileWriter("src/_02_Pixel_Art/test.txt");
+			
+			for(int i = 0; i < gp.getPixel().length; i++) {
+				for(int j = 0; j < gp.getPixel()[i].length; j++) {
+					
+					String hex = "#"+Integer.toHexString(gp.getPixel()[i][j].color.getRGB()).substring(2);
+					fw.write(gp.getPixel()[i][j].x + "," + gp.getPixel()[i][j].y + "," + hex + ",");
+					
+				}
+			}
+			
+			
+			
+			
+			
+			
+				
+			fw.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		
 	}
 }
