@@ -6,9 +6,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.PixelInterleavedSampleModel;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
@@ -38,6 +45,7 @@ public class PixelArtMaker implements MouseListener, ActionListener{
 
 	public void submitGridData(int w, int h, int r, int c) {
 		gp = new GridPanel(w, h, r, c);
+		openOldGP();
 		csp = new ColorSelectionPanel();
 		button = new JButton();
 		panel = new JPanel();
@@ -53,6 +61,7 @@ public class PixelArtMaker implements MouseListener, ActionListener{
 		window.pack();
 	}
 	
+
 	public static void main(String[] args) {
 		new PixelArtMaker().start();
 	}
@@ -85,24 +94,13 @@ public class PixelArtMaker implements MouseListener, ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		System.out.println("hi");
 		try {
-			FileWriter fw = new FileWriter("src/_02_Pixel_Art/test.txt");
+			FileOutputStream fos = new FileOutputStream("src/_02_Pixel_Art/test.obj");
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+	
+			oos.writeObject(gp.pixels);
 			
-			for(int i = 0; i < gp.getPixel().length; i++) {
-				for(int j = 0; j < gp.getPixel()[i].length; j++) {
-					
-					String hex = "#"+Integer.toHexString(gp.getPixel()[i][j].color.getRGB()).substring(2);
-					fw.write(gp.getPixel()[i][j].x + "," + gp.getPixel()[i][j].y + "," + hex + ",");
-					
-				}
-			}
-			
-			
-			
-			
-			
-			
-				
-			fw.close();
+			oos.close();
+			fos.close();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -110,12 +108,37 @@ public class PixelArtMaker implements MouseListener, ActionListener{
 		
 	}
 	
-	public static Color hex2Rgb(String colorStr) {
-	    return new Color(
-	            Integer.valueOf( colorStr.substring( 1, 3 ), 16 ),
-	            Integer.valueOf( colorStr.substring( 3, 5 ), 16 ),
-	            Integer.valueOf( colorStr.substring( 5, 7 ), 16 ) );
+	private void openOldGP() {
+		
+		
+		try {
+			
+			FileInputStream fis = new FileInputStream("src/_02_Pixel_Art/test.obj");
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			
+			Pixel[][] pixels = (Pixel[][]) ois.readObject();
+			
+			for(int i = 0; i < gp.getPixel().length; i++) {
+				for(int j = 0; j < gp.getPixel()[i].length; j++) {
+					
+					gp.pixels[i][j].color = pixels[i][j].color;
+					
+				}
+			}
+			
+			ois.close();
+			fis.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
+	
 	
 	
 }
